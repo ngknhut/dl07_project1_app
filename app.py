@@ -729,6 +729,20 @@ elif choice=='Tra cứu nhóm khách hàng':
                     st.badge(f"Khách hàng thuộc cụm theo Kmeans_RFM: {group_name}",color='orange')
                     rfm_level = customer_data['RFM_Level'].iloc[0]
                     st.badge(f"Khách hàng thuộc cụm theo tập luận RFM: {rfm_level}",color='orange')
+                    # Vẽ treemap
+                    squarify.plot(
+                        sizes=rfm_agg['Count'],  # Kích thước ô dựa trên số lượng khách hàng
+                        text_kwargs={'fontsize': 12, 'weight': 'bold', 'fontname': 'sans serif'},  # Tùy chỉnh văn bản
+                        color=colors_dict.values(),  # Gán màu từ từ điển
+                        label=['{} \n{:.0f} days \n{:.0f} orders \n{:.0f} $ \n{:.0f} customers ({}%)'.format(*rfm_agg.iloc[i])
+                                      for i in range(0, len(rfm_agg))],  # Nhãn với thông tin chi tiết
+                        alpha=0.5  # Độ trong suốt
+                    )
+                    # Tùy chỉnh biểu đồ
+                    plt.title("Customers Segments_Manual RFM", fontsize=26, fontweight="bold")
+                    plt.axis('off')  # Tắt trục
+                    # Hiển thị biểu đồ trong Streamlit
+                    st.pyplot(fig)
                 else:
                     st.write("Không tìm thấy khách hàng với mã này.")
             except ValueError:
