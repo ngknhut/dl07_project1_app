@@ -49,7 +49,9 @@ def load_transactions_df():
 def load_model(path='customer_segmentation_pipeline.pkl'):
     with open(path, 'rb') as f:
         return pickle.load(f)
-
+        
+#pipeline = joblib.load('customer_segmentation_pipeline.pkl')
+pipeline = load_model()
 products_df = load_product_df()
 transactions_df = load_transactions_df()
 transactions_df['Date'] = pd.to_datetime(transactions_df['Date'], format='%d-%m-%Y')
@@ -577,7 +579,7 @@ elif choice=='Huấn luyện mô hình':
 
 
 elif choice=='Tra cứu nhóm khách hàng':
-    pipeline = joblib.load('customer_segmentation_pipeline.pkl')
+    
     # CSS để tùy chỉnh kích thước chữ cho badge
     st.markdown("""
     <style>
