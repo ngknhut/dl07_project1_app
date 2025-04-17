@@ -259,7 +259,7 @@ st.sidebar.title("Customer Segmentation")
 st.sidebar.image("side_bar_img.jpg", width=250)
 st.sidebar.markdown("---")
 
-menu = ["Giới thiệu tổng quan", "EDA","Huấn luyện mô hình","Tra cứu nhóm khách hàng"]
+menu = ["Giới thiệu tổng quan", "EDA","Tra cứu nhóm khách hàng"]
 choice = st.sidebar.selectbox('Menu', menu)
 
 # Thiết lập thông tin trong sidebar
@@ -450,12 +450,11 @@ elif choice == 'EDA':
         ax.text(v + 0.5, i, f'{v:.2f}', va='center')
     # Hiển thị biểu đồ trong Streamlit
     st.pyplot(fig)
-    
-elif choice=='Huấn luyện mô hình':
-    st.subheader("Manual RFM")
-        # Calculate average values for each RFM_Level, and return a size of each segment
-    
 
+    
+    st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
+    st.subheader("Manual RFM")
+    # Calculate average values for each RFM_Level, and return a size of each segment
     # Tạo figure với kích thước tổng thể
     fig, axes = plt.subplots(3, 1, figsize=(12, 6))  # 3 hàng, 1 cột, kích thước 12x6
     # Vẽ phân phối của 'Recency'
@@ -534,8 +533,6 @@ elif choice=='Huấn luyện mô hình':
 
     # Hiển thị biểu đồ trong Streamlit
     st.pyplot(fig)
-
-    
     # Tạo biểu đồ phân tán
     fig = px.scatter(
         rfm_agg2,
@@ -578,8 +575,7 @@ elif choice=='Huấn luyện mô hình':
 
     # Hiển thị biểu đồ trong Streamlit
     st.pyplot(fig)
-
-
+    
 elif choice=='Tra cứu nhóm khách hàng':
     
     # CSS để tùy chỉnh kích thước chữ cho badge
