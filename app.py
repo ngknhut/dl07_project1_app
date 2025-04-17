@@ -734,11 +734,11 @@ elif choice=='Tra cứu nhóm khách hàng':
                      # Tạo figure và axes
                     fig = plt.figure()  # Tạo figure
                     ax = fig.add_subplot()  # Thêm subplot
-                    fig.set_size_inches(11, 8)  # Đặt kích thước 14x10
+                    fig.set_size_inches(9, 6)  # Đặt kích thước 14x10
                     # Vẽ treemap
                     squarify.plot(
                         sizes=rfm_agg['Count'],  # Kích thước ô dựa trên số lượng khách hàng
-                        text_kwargs={'fontsize': 12, 'weight': 'bold', 'fontname': 'sans serif'},  # Tùy chỉnh văn bản
+                        text_kwargs={'fontsize': 8, 'weight': 'bold', 'fontname': 'sans serif'},  # Tùy chỉnh văn bản
                         color=colors_dict.values(),  # Gán màu từ từ điển
                         label=['{} \n{:.0f} days \n{:.0f} orders \n{:.0f} $ \n{:.0f} customers ({}%)'.format(*rfm_agg.iloc[i])
                                       for i in range(0, len(rfm_agg))],  # Nhãn với thông tin chi tiết
