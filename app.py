@@ -731,6 +731,7 @@ elif choice=='Tra cứu nhóm khách hàng':
                     rfm_level = customer_data['RFM_Level'].iloc[0]
                     st.badge(f"Khách hàng thuộc cụm theo tập luận RFM: {rfm_level}",color='orange')
                     
+                    st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
                      # Tạo figure và axes
                     fig = plt.figure()  # Tạo figure
                     ax = fig.add_subplot()  # Thêm subplot
@@ -738,14 +739,14 @@ elif choice=='Tra cứu nhóm khách hàng':
                     # Vẽ treemap
                     squarify.plot(
                         sizes=rfm_agg['Count'],  # Kích thước ô dựa trên số lượng khách hàng
-                        text_kwargs={'fontsize': 8, 'weight': 'bold', 'fontname': 'sans serif'},  # Tùy chỉnh văn bản
+                        text_kwargs={'fontsize': 6, 'weight': 'bold', 'fontname': 'sans serif'},  # Tùy chỉnh văn bản
                         color=colors_dict.values(),  # Gán màu từ từ điển
                         label=['{} \n{:.0f} days \n{:.0f} orders \n{:.0f} $ \n{:.0f} customers ({}%)'.format(*rfm_agg.iloc[i])
                                       for i in range(0, len(rfm_agg))],  # Nhãn với thông tin chi tiết
                         alpha=0.5  # Độ trong suốt
                     )
                     # Tùy chỉnh biểu đồ
-                    plt.title("Customers Segments_Manual RFM", fontsize=18, fontweight="bold")
+                    plt.title("Customers Segments_Manual RFM", fontsize=14, fontweight="bold")
                     plt.axis('off')  # Tắt trục
                     # Hiển thị biểu đồ trong Streamlit
                     st.pyplot(fig)
