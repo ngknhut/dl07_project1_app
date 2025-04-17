@@ -745,7 +745,7 @@ elif choice=='Tra cứu nhóm khách hàng':
                         alpha=0.5  # Độ trong suốt
                     )
                     # Tùy chỉnh biểu đồ
-                    plt.title("Customers Segments_Manual RFM", fontsize=26, fontweight="bold")
+                    plt.title("Customers Segments_Manual RFM", fontsize=18, fontweight="bold")
                     plt.axis('off')  # Tắt trục
                     # Hiển thị biểu đồ trong Streamlit
                     st.pyplot(fig)
