@@ -45,6 +45,11 @@ def load_transactions_df():
         st.error(f"Lỗi khi đọc file CSV: {e}")
         return pd.DataFrame()  # Trả về DataFrame trống nếu có lỗi
 
+@st.cache_resource
+def load_content_gem(path='customer_segmentation_pipeline.pkl'):
+    with open(path, 'rb') as f:
+        return pickle.load(f)
+
 products_df = load_product_df()
 transactions_df = load_transactions_df()
 transactions_df['Date'] = pd.to_datetime(transactions_df['Date'], format='%d-%m-%Y')
