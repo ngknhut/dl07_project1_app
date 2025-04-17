@@ -120,6 +120,16 @@ rfm_agg['Percent'] = round((rfm_agg['Count']/rfm_agg.Count.sum())*100, 2)
 # Reset the index
 rfm_agg = rfm_agg.reset_index()
 
+# Định nghĩa từ điển màu sắc
+colors_dict = {
+    'Active Customers': 'yellow',
+    'Big Spenders': 'royalblue',
+    'Occasional Customers': 'cyan',
+    'Lost Customers': 'red',
+    'Loyal Customers': 'purple',
+    'New Customers': 'green',
+    'Best Customers': 'gold'
+}
 
 def highlight_kmeans(val):
     if val == 'VIP':
@@ -373,16 +383,6 @@ elif choice=='Huấn luyện mô hình':
     st.table(rfm_df['RFM_Level'].value_counts())
     st.table(rfm_agg)
 
-    # Định nghĩa từ điển màu sắc
-    colors_dict = {
-        'Active Customers': 'yellow',
-        'Big Spenders': 'royalblue',
-        'Occasional Customers': 'cyan',
-        'Lost Customers': 'red',
-        'Loyal Customers': 'purple',
-        'New Customers': 'green',
-        'Best Customers': 'gold'
-    }
     # Tạo figure và axes
     fig = plt.figure()  # Tạo figure
     ax = fig.add_subplot()  # Thêm subplot
