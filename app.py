@@ -46,9 +46,8 @@ def load_transactions_df():
         return pd.DataFrame()  # Trả về DataFrame trống nếu có lỗi
 
 @st.cache_resource
-def load_model(path='customer_segmentation_pipeline.pkl'):
-    with open(path, 'rb') as f:
-        return pickle.load(f)
+def load_model():
+    return joblib.load('customer_segmentation_pipeline.pkl')
         
 #pipeline = joblib.load('customer_segmentation_pipeline.pkl')
 pipeline = load_model()
