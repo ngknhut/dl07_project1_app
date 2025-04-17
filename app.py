@@ -883,6 +883,34 @@ elif choice=='Tra cứu nhóm khách hàng':
                     )
                     #st.write(df_uploaded)
                     st.dataframe(styled_df_1, use_container_width=True)
+                    st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
+                    # Tạo figure và axes
+                    fig = plt.figure()
+                    ax = fig.add_subplot()
+                    fig.set_size_inches(14, 10)
+                
+                    # Vẽ Treemap
+                    squarify.plot(
+                        sizes=rfm_agg2['Count'],
+                        text_kwargs={'fontsize': 12, 'weight': 'bold', 'fontname': "sans serif"},
+                        color=colors_dict2.values(),
+                        label=['{} \n{:.0f} days \n{:.0f} orders \n{:.0f} $ \n{:.0f} customers ({}%)'.format(
+                            rfm_agg2['Cluster_Name'].iloc[i],  # Sử dụng Cluster_Name thay vì Cluster
+                            rfm_agg2['RecencyMean'].iloc[i],
+                            rfm_agg2['FrequencyMean'].iloc[i],
+                            rfm_agg2['MonetaryMean'].iloc[i],
+                            rfm_agg2['Count'].iloc[i],
+                            rfm_agg2['Percent'].iloc[i]
+                        ) for i in range(0, len(rfm_agg2))],
+                        alpha=0.5
+                    )
+                    
+                    # Tùy chỉnh biểu đồ
+                    plt.title("Customers Segments_Kmeans RFM", fontsize=26, fontweight="bold")
+                    plt.axis('off')
+                
+                    # Hiển thị biểu đồ trong Streamlit
+                    st.pyplot(fig)
                 else:
                     st.error("File tải lên cần có các cột: Recency, Frequency, Monetary")
             except Exception as e:
