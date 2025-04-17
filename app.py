@@ -734,23 +734,33 @@ elif choice=='Tra cứu nhóm khách hàng':
                     
                     st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
                      # Tạo figure và axes
-                    fig = plt.figure()  # Tạo figure
-                    ax = fig.add_subplot()  # Thêm subplot
-                    fig.set_size_inches(9, 6)  # Đặt kích thước 14x10
-                    # Vẽ treemap
+                    fig = plt.figure()
+                    ax = fig.add_subplot()
+                    fig.set_size_inches(14, 10)
+                
+                    # Vẽ Treemap
                     squarify.plot(
-                        sizes=rfm_agg['Count'],  # Kích thước ô dựa trên số lượng khách hàng
-                        text_kwargs={'fontsize': 6, 'weight': 'bold', 'fontname': 'sans serif'},  # Tùy chỉnh văn bản
-                        color=colors_dict.values(),  # Gán màu từ từ điển
-                        label=['{} \n{:.0f} days \n{:.0f} orders \n{:.0f} $ \n{:.0f} customers ({}%)'.format(*rfm_agg.iloc[i])
-                                      for i in range(0, len(rfm_agg))],  # Nhãn với thông tin chi tiết
-                        alpha=0.5  # Độ trong suốt
+                        sizes=rfm_agg2['Count'],
+                        text_kwargs={'fontsize': 12, 'weight': 'bold', 'fontname': "sans serif"},
+                        color=colors_dict2.values(),
+                        label=['{} \n{:.0f} days \n{:.0f} orders \n{:.0f} $ \n{:.0f} customers ({}%)'.format(
+                            rfm_agg2['Cluster_Name'].iloc[i],  # Sử dụng Cluster_Name thay vì Cluster
+                            rfm_agg2['RecencyMean'].iloc[i],
+                            rfm_agg2['FrequencyMean'].iloc[i],
+                            rfm_agg2['MonetaryMean'].iloc[i],
+                            rfm_agg2['Count'].iloc[i],
+                            rfm_agg2['Percent'].iloc[i]
+                        ) for i in range(0, len(rfm_agg2))],
+                        alpha=0.5
                     )
+                    
                     # Tùy chỉnh biểu đồ
-                    plt.title("Customers Segments_Manual RFM", fontsize=14, fontweight="bold")
-                    plt.axis('off')  # Tắt trục
+                    plt.title("Customers Segments_Kmeans RFM", fontsize=26, fontweight="bold")
+                    plt.axis('off')
+                
                     # Hiển thị biểu đồ trong Streamlit
                     st.pyplot(fig)
+                     
                 else:
                     st.write("Không tìm thấy khách hàng với mã này.")
             except ValueError:
@@ -786,7 +796,33 @@ elif choice=='Tra cứu nhóm khách hàng':
         #st.write(df_customer)
         st.dataframe(styled_df, use_container_width=True)
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
-         
+         # Tạo figure và axes
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        fig.set_size_inches(14, 10)
+    
+        # Vẽ Treemap
+        squarify.plot(
+            sizes=rfm_agg2['Count'],
+            text_kwargs={'fontsize': 12, 'weight': 'bold', 'fontname': "sans serif"},
+            color=colors_dict2.values(),
+            label=['{} \n{:.0f} days \n{:.0f} orders \n{:.0f} $ \n{:.0f} customers ({}%)'.format(
+                rfm_agg2['Cluster_Name'].iloc[i],  # Sử dụng Cluster_Name thay vì Cluster
+                rfm_agg2['RecencyMean'].iloc[i],
+                rfm_agg2['FrequencyMean'].iloc[i],
+                rfm_agg2['MonetaryMean'].iloc[i],
+                rfm_agg2['Count'].iloc[i],
+                rfm_agg2['Percent'].iloc[i]
+            ) for i in range(0, len(rfm_agg2))],
+            alpha=0.5
+        )
+        
+        # Tùy chỉnh biểu đồ
+        plt.title("Customers Segments_Kmeans RFM", fontsize=26, fontweight="bold")
+        plt.axis('off')
+    
+        # Hiển thị biểu đồ trong Streamlit
+        st.pyplot(fig)
 
     with tabs[2]:
         # Nếu người dùng chọn tải file Excel/CSV
