@@ -130,6 +130,100 @@ colors_dict = {
     'New Customers': 'green',
     'Best Customers': 'gold'
 }
+rfm_df= pd.read_csv('rfm_df.csv')
+df_now = rfm_df[['Recency','Frequency','Monetary']]
+rfm_df['Log_Recency'] = np.log1p(rfm_df['Recency'])
+rfm_df['Log_Frequency'] = np.log1p(rfm_df['Frequency'])
+rfm_df['Log_Monetary'] = np.log1p(rfm_df['Monetary'])
+scaler = RobustScaler()
+rfm_df[['Scaled_Log_Recency', 'Scaled_Log_Frequency', 'Scaled_Log_Monetary']] = scaler.fit_transform(
+    rfm_df[['Log_Recency', 'Log_Frequency', 'Log_Monetary']])
+# Elbow Method để chọn k
+X = rfm_df[['Scaled_Log_Recency', 'Scaled_Log_Frequency', 'Scaled_Log_Monetary']]
+
+range_n_clusters = range(2, 11)
+
+# Tính toán Silhouette Score và SSE
+silhouette_avg_list = []
+sse_list = []
+
+for n_clusters in range_n_clusters:
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
+    cluster_labels = kmeans.fit_predict(X)
+    
+    # Silhouette Score
+    silhouette_avg = silhouette_score(X, cluster_labels)
+    silhouette_avg_list.append(silhouette_avg)
+    
+    # SSE
+    sse = kmeans.inertia_
+    sse_list.append(sse)
+
+# Tính SSE%
+sse_percent_drop = [0]  # Phần trăm giảm đầu tiên = 0
+for i in range(1, len(sse_list)):
+    drop = ((sse_list[i-1] - sse_list[i]) / sse_list[i-1]) * 100
+    sse_percent_drop.append(drop)
+    
+# Lấy các cột đã chuẩn hóa từ rfm_df
+df_now_scaled = rfm_df[['Scaled_Log_Recency', 'Scaled_Log_Frequency', 'Scaled_Log_Monetary']]
+# Thực hiện phân cụm với k = 4
+kmeans = KMeans(n_clusters=4, random_state=42)
+kmeans.fit(df_now_scaled)
+# Gán nhãn phân cụm vào cột 'Cluster' trong rfm_df
+rfm_df['Cluster'] = kmeans.labels_
+# Tính trung bình và đếm số lượng cho từng cụm
+rfm_agg2 = rfm_df.groupby('Cluster').agg({
+    'Recency': 'mean',
+    'Frequency': 'mean',
+    'Monetary': ['mean', 'count']
+}).round(0)
+# Phương pháp 2: Đổi tên các mục trong chú thích
+cluster_names = {
+    0: 'Loyal Customers',
+    1: 'At-Risk Customers',
+    2: 'VIP',
+    3: 'Lost Customers'
+}
+# Đổi tên cột
+rfm_agg2.columns = rfm_agg2.columns.droplevel()
+rfm_agg2.columns = ['RecencyMean', 'FrequencyMean', 'MonetaryMean', 'Count']
+# Tính phần trăm
+rfm_agg2['Percent'] = round((rfm_agg2['Count'] / rfm_agg2.Count.sum()) * 100, 2)
+rfm_agg2 = rfm_agg2.reset_index()
+
+# Đổi kiểu dữ liệu cột Cluster
+rfm_agg2['Cluster'] = 'Cluster ' + rfm_agg2['Cluster'].astype('str')
+# Tạo ánh xạ từ giá trị Cluster sang tên có ý nghĩa
+cluster_mapping = {
+    'Cluster 0': 'Loyal Customers',
+    'Cluster 1': 'At-Risk Customers',
+    'Cluster 2': 'VIP',
+    'Cluster 3': 'Lost Customers'
+}
+
+# Tạo cột mới trong DataFrame
+rfm_agg2['ClusterName'] = rfm_agg2['Cluster'].map(cluster_mapping)
+# Định nghĩa từ điển màu sắc
+colors_dict2 = {
+    'Cluster0': 'yellow',
+    'Cluster1': 'royalblue',
+    'Cluster2': 'cyan',
+    'Cluster3': 'red',
+}
+
+# Định nghĩa từ điển ánh xạ
+cluster_to_group = {
+    0: 'Loyal Customers',
+    1: 'At-Risk Customers',
+    2: 'VIP',
+    3: 'Lost Customers'
+}
+
+# Thêm cột 'Cluster_Name' vào rfm_agg2
+rfm_agg2['Cluster_Name'] = rfm_agg2['Cluster'].apply(lambda x: cluster_to_group[int(x.split()[-1])])
+
+
 
 def highlight_kmeans(val):
     if val == 'VIP':
@@ -416,72 +510,6 @@ elif choice=='Huấn luyện mô hình':
     st.plotly_chart(fig, use_container_width=True)
   
     st.subheader("Kmeans RFM")
-    
-    rfm_df= pd.read_csv('rfm_df.csv')
-    df_now = rfm_df[['Recency','Frequency','Monetary']]
-    rfm_df['Log_Recency'] = np.log1p(rfm_df['Recency'])
-    rfm_df['Log_Frequency'] = np.log1p(rfm_df['Frequency'])
-    rfm_df['Log_Monetary'] = np.log1p(rfm_df['Monetary'])
-    scaler = RobustScaler()
-    rfm_df[['Scaled_Log_Recency', 'Scaled_Log_Frequency', 'Scaled_Log_Monetary']] = scaler.fit_transform(
-        rfm_df[['Log_Recency', 'Log_Frequency', 'Log_Monetary']])
-    # Elbow Method để chọn k
-    X = rfm_df[['Scaled_Log_Recency', 'Scaled_Log_Frequency', 'Scaled_Log_Monetary']]
-
-    range_n_clusters = range(2, 11)
-
-    # Tính toán Silhouette Score và SSE
-    silhouette_avg_list = []
-    sse_list = []
-
-    for n_clusters in range_n_clusters:
-        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
-        cluster_labels = kmeans.fit_predict(X)
-        
-        # Silhouette Score
-        silhouette_avg = silhouette_score(X, cluster_labels)
-        silhouette_avg_list.append(silhouette_avg)
-        
-        # SSE
-        sse = kmeans.inertia_
-        sse_list.append(sse)
-
-    # Tính SSE%
-    sse_percent_drop = [0]  # Phần trăm giảm đầu tiên = 0
-    for i in range(1, len(sse_list)):
-        drop = ((sse_list[i-1] - sse_list[i]) / sse_list[i-1]) * 100
-        sse_percent_drop.append(drop)
-        
-    # Lấy các cột đã chuẩn hóa từ rfm_df
-    df_now_scaled = rfm_df[['Scaled_Log_Recency', 'Scaled_Log_Frequency', 'Scaled_Log_Monetary']]
-    # Thực hiện phân cụm với k = 4
-    kmeans = KMeans(n_clusters=4, random_state=42)
-    kmeans.fit(df_now_scaled)
-    # Gán nhãn phân cụm vào cột 'Cluster' trong rfm_df
-    rfm_df['Cluster'] = kmeans.labels_
-    # Tính trung bình và đếm số lượng cho từng cụm
-    rfm_agg2 = rfm_df.groupby('Cluster').agg({
-        'Recency': 'mean',
-        'Frequency': 'mean',
-        'Monetary': ['mean', 'count']
-    }).round(0)
-    # Phương pháp 2: Đổi tên các mục trong chú thích
-    cluster_names = {
-        0: 'Loyal Customers',
-        1: 'At-Risk Customers',
-        2: 'VIP',
-        3: 'Lost Customers'
-    }
-    # Đổi tên cột
-    rfm_agg2.columns = rfm_agg2.columns.droplevel()
-    rfm_agg2.columns = ['RecencyMean', 'FrequencyMean', 'MonetaryMean', 'Count']
-    # Tính phần trăm
-    rfm_agg2['Percent'] = round((rfm_agg2['Count'] / rfm_agg2.Count.sum()) * 100, 2)
-    rfm_agg2 = rfm_agg2.reset_index()
-
-    # Đổi kiểu dữ liệu cột Cluster
-    rfm_agg2['Cluster'] = 'Cluster ' + rfm_agg2['Cluster'].astype('str')
-
     # Vẽ biểu đồ
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
@@ -507,16 +535,7 @@ elif choice=='Huấn luyện mô hình':
     # Hiển thị biểu đồ trong Streamlit
     st.pyplot(fig)
 
-    # Tạo ánh xạ từ giá trị Cluster sang tên có ý nghĩa
-    cluster_mapping = {
-        'Cluster 0': 'Loyal Customers',
-        'Cluster 1': 'At-Risk Customers',
-        'Cluster 2': 'VIP',
-        'Cluster 3': 'Lost Customers'
-    }
-
-    # Tạo cột mới trong DataFrame
-    rfm_agg2['ClusterName'] = rfm_agg2['Cluster'].map(cluster_mapping)
+    
     # Tạo biểu đồ phân tán
     fig = px.scatter(
         rfm_agg2,
@@ -531,25 +550,7 @@ elif choice=='Huấn luyện mô hình':
     # Hiển thị biểu đồ trong Streamlit
     st.plotly_chart(fig, use_container_width=True)
 
-    # Định nghĩa từ điển màu sắc
-    colors_dict2 = {
-        'Cluster0': 'yellow',
-        'Cluster1': 'royalblue',
-        'Cluster2': 'cyan',
-        'Cluster3': 'red',
-    }
-
-        # Định nghĩa từ điển ánh xạ
-    cluster_to_group = {
-        0: 'Loyal Customers',
-        1: 'At-Risk Customers',
-        2: 'VIP',
-        3: 'Lost Customers'
-    }
-
-    # Thêm cột 'Cluster_Name' vào rfm_agg2
-    rfm_agg2['Cluster_Name'] = rfm_agg2['Cluster'].apply(lambda x: cluster_to_group[int(x.split()[-1])])
-
+    
     # Tạo figure và axes
     fig = plt.figure()
     ax = fig.add_subplot()
@@ -784,6 +785,8 @@ elif choice=='Tra cứu nhóm khách hàng':
         st.markdown('<span class="highlight-label medium">2. Phân cụm khách hàng</span>', unsafe_allow_html=True)
         #st.write(df_customer)
         st.dataframe(styled_df, use_container_width=True)
+        st.markdown('<div class="separator"></div>', unsafe_allow_html=True) 
+         
 
     with tabs[2]:
         # Nếu người dùng chọn tải file Excel/CSV
