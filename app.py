@@ -109,6 +109,17 @@ def rfm_level(df):
 rfm_df['RFM_Level'] = rfm_df.apply(rfm_level, axis=1)
 output_file = 'rfm_df.csv'
 rfm_df.to_csv(output_file, index=True, encoding='utf-8')
+rfm_agg = rfm_df.groupby('RFM_Level').agg({
+        'Recency': 'mean',
+        'Frequency': 'mean',
+        'Monetary': ['mean', 'count']}).round(0)
+
+rfm_agg.columns = rfm_agg.columns.droplevel()
+rfm_agg.columns = ['RecencyMean','FrequencyMean','MonetaryMean', 'Count']
+rfm_agg['Percent'] = round((rfm_agg['Count']/rfm_agg.Count.sum())*100, 2)
+# Reset the index
+rfm_agg = rfm_agg.reset_index()
+
 
 def highlight_kmeans(val):
     if val == 'VIP':
@@ -339,16 +350,7 @@ elif choice == 'EDA':
 elif choice=='Huấn luyện mô hình':
     st.subheader("Manual RFM")
         # Calculate average values for each RFM_Level, and return a size of each segment
-    rfm_agg = rfm_df.groupby('RFM_Level').agg({
-        'Recency': 'mean',
-        'Frequency': 'mean',
-        'Monetary': ['mean', 'count']}).round(0)
-
-    rfm_agg.columns = rfm_agg.columns.droplevel()
-    rfm_agg.columns = ['RecencyMean','FrequencyMean','MonetaryMean', 'Count']
-    rfm_agg['Percent'] = round((rfm_agg['Count']/rfm_agg.Count.sum())*100, 2)
-    # Reset the index
-    rfm_agg = rfm_agg.reset_index()
+    
 
     # Tạo figure với kích thước tổng thể
     fig, axes = plt.subplots(3, 1, figsize=(12, 6))  # 3 hàng, 1 cột, kích thước 12x6
