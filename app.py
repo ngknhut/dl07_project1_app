@@ -730,6 +730,11 @@ elif choice=='Tra cứu nhóm khách hàng':
                     st.badge(f"Khách hàng thuộc cụm theo Kmeans_RFM: {group_name}",color='orange')
                     rfm_level = customer_data['RFM_Level'].iloc[0]
                     st.badge(f"Khách hàng thuộc cụm theo tập luận RFM: {rfm_level}",color='orange')
+                    
+                     # Tạo figure và axes
+                    fig = plt.figure()  # Tạo figure
+                    ax = fig.add_subplot()  # Thêm subplot
+                    fig.set_size_inches(11, 8)  # Đặt kích thước 14x10
                     # Vẽ treemap
                     squarify.plot(
                         sizes=rfm_agg['Count'],  # Kích thước ô dựa trên số lượng khách hàng
