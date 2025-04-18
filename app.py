@@ -770,9 +770,9 @@ elif choice=='Tra cứu nhóm khách hàng':
         for i in range(5):
             #st.write(f"Khách hàng {i+1}")
             st.badge(f"* Khách hàng {i+1}",color='orange')
-            recency = st.slider("Recency (ngày)", 1, 365, 100, key=f"recency_{i}")
-            frequency = st.slider("Frequency (đơn hàng)", 1, 50, 5, key=f"frequency_{i}")
-            monetary = st.slider("Monetary ($)", 1, 1000, 100, key=f"monetary_{i}")
+            recency = st.slider("Recency (ngày)", 1, 730, 100, key=f"recency_{i}")
+            frequency = st.slider("Frequency (đơn hàng)", 1, 11, 5, key=f"frequency_{i}")
+            monetary = st.slider("Monetary ($)", 1, 376, 100, key=f"monetary_{i}")
             customer_data.append({"Recency": recency, "Frequency": frequency, "Monetary": monetary})
 
         # Chuyển danh sách thành DataFrame
